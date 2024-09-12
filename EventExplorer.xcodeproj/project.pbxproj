@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		493100C32C92E72600DE711C /* TheaterTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493100C22C92E72600DE711C /* TheaterTypeView.swift */; };
 		494387462C92B09200FACD09 /* ConcertsTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494387452C92B09200FACD09 /* ConcertsTypeView.swift */; };
 		4965674D2B90BAF300A4B69C /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 4965674C2B90BAF300A4B69C /* SwiftSoup */; };
 		496761AF2BFE875A006802B0 /* GradientButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496761AE2BFE875A006802B0 /* GradientButtonStyle.swift */; };
@@ -50,6 +51,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		493100C22C92E72600DE711C /* TheaterTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheaterTypeView.swift; sourceTree = "<group>"; };
 		494387452C92B09200FACD09 /* ConcertsTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcertsTypeView.swift; sourceTree = "<group>"; };
 		496761AE2BFE875A006802B0 /* GradientButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientButtonStyle.swift; sourceTree = "<group>"; };
 		4968DA412BFCDD7400BDDF74 /* EventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventView.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			children = (
 				496B2A092C92AE4300A4A2D2 /* SportsTypeView.swift */,
 				494387452C92B09200FACD09 /* ConcertsTypeView.swift */,
+				493100C22C92E72600DE711C /* TheaterTypeView.swift */,
 			);
 			path = TypeViews;
 			sourceTree = "<group>";
@@ -358,6 +361,7 @@
 				49C530602B878745009E6877 /* EventListView.swift in Sources */,
 				497788712BEF86650050D339 /* EventViewModel.swift in Sources */,
 				4968DA422BFCDD7400BDDF74 /* EventView.swift in Sources */,
+				493100C32C92E72600DE711C /* TheaterTypeView.swift in Sources */,
 				49C5305E2B87852E009E6877 /* RegistrationView.swift in Sources */,
 				496C42902B923D4E003DB970 /* SearchEventsView.swift in Sources */,
 				497788842BF0160B0050D339 /* SearchBar.swift in Sources */,
