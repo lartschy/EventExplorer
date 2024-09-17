@@ -51,6 +51,24 @@ class NearbyEventsViewModel: ObservableObject {
         }
     }
     
+    func fetchDataCategoryAndTypes(category: String, types: [String]? = nil, for country: String) {
+            APIService.shared.fetchData(country: country) { [weak self] fetchedEvents in
+                let filteredEvents: [EventModel]
+                
+                if let types = types {
+                    filteredEvents = fetchedEvents.filter { $0.category == category && types.contains($0.type) }
+                } else {
+                    filteredEvents = fetchedEvents.filter { $0.category == category }
+                }
+                
+                DispatchQueue.main.async {
+                    self?.events = filteredEvents
+                }
+                
+                print("Fetched events for category:", category, "and types:", types ?? ["All Types"])
+            }
+        }
+    
     func formatDate(_ dateString: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
