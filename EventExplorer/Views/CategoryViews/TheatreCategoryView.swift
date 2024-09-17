@@ -11,6 +11,8 @@ struct TheatreCategoryView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: NearbyEventsViewModel
     @State private var selectedCountry: String = "Germany"
+    let types: [String]?
+
 
     let countries = [
         "US", "Canada", "Mexico", "Brazil", "Argentina", "Colombia", "Peru", "Chile",
@@ -20,8 +22,9 @@ struct TheatreCategoryView: View {
         "Estonia", "Slovenia", "Luxembourg", "Malta", "Cyprus"
     ]
 
-    init(viewModel: NearbyEventsViewModel) {
+    init(viewModel: NearbyEventsViewModel, types: [String]?) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.types = types
     }
 
     var body: some View {
@@ -55,10 +58,10 @@ struct TheatreCategoryView: View {
                 }
                 .navigationTitle("Theatre Events")
                 .onAppear {
-                    viewModel.fetchDataCategory("theater", for: selectedCountry)
+                    viewModel.fetchDataCategoryAndTypes(category: "theater", types: types, for: selectedCountry)
                 }
                 .onChange(of: selectedCountry) { newCountry in
-                    viewModel.fetchDataCategory("theater", for: newCountry)
+                    viewModel.fetchDataCategoryAndTypes(category: "theater", types: types, for: selectedCountry)
                 }
             }
         

@@ -8,11 +8,79 @@
 import SwiftUI
 
 struct SportsTypeView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+    @StateObject private var viewModel: NearbyEventsViewModel
+    @State private var events: [EventModel] = []
+    
+    init(viewModel: NearbyEventsViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
-}
-
-#Preview {
-    SportsTypeView()
+    
+    var body: some View {
+            VStack {
+                VStack(spacing: 30) {
+                    HStack() {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: ["basketball", "mlb", "wnba"])) {
+                            Text("Basketball")
+                                .categoryText(imageName: "basketball_type")
+                        }
+                    }
+                    
+                    HStack() {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: ["soccer", "mls", "ncaa_soccer"])) {
+                            Text("Soccer")
+                                .categoryText(imageName: "soccer_type")
+                        }
+                    }
+                    HStack() {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: ["nfl", "football"])) {
+                            Text("American Football")
+                                .categoryText(imageName: "football_type")
+                        }
+                    }
+                    
+                    HStack() {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: nil)) {
+                            Text("All Sports")
+                                .categoryText(imageName: "all_sports_type")
+                        }
+                    }
+                    /*
+                    HStack() {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: ["baseball", "minor_league_baseball"])) {
+                            Text("Baseball")
+                                .categoryText(imageName: "baseball_type")
+                        }
+                    }
+                    
+                    HStack() {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: ["volleyball", "college_volleyball"])) {
+                            Text("Volleyball")
+                                .categoryText(imageName: "volleyball_type")
+                        }
+                    }
+                    HStack() {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: ["hockey"])) {
+                            Text("Hockey")
+                                .categoryText(imageName: "hockey_type")
+                        }
+                    }
+                    HStack() {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: ["stadium_tours"])) {
+                            Text("Stadium tours")
+                                .categoryText(imageName: "stadiumtour_type")
+                        }
+                    }
+                    */
+                    
+                    
+                }
+                .padding([.leading, .trailing], 20)
+                .padding(.top, 20)
+                .padding(.bottom, 20)
+            }
+            .navigationTitle("Sport Events")
+            .navigationBarBackButtonHidden(false)
+        }
+    
+    
 }

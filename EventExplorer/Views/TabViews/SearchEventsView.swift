@@ -17,18 +17,18 @@ struct SearchEventsView: View {
             VStack {
                 VStack(spacing: 20) {
                     HStack(spacing: 20) {
-                        NavigationLink(destination: SportsCategoryView(viewModel: NearbyEventsViewModel())) {
+                        NavigationLink(destination: SportsTypeView(viewModel: NearbyEventsViewModel())) {
                             Text("Sports")
                                 .categoryText(imageName: "sports_category")
                         }
-                        NavigationLink(destination: ConcertsCategoryView(viewModel: NearbyEventsViewModel())) {
+                        NavigationLink(destination: ConcertsTypeView(viewModel: NearbyEventsViewModel())) {
                             Text("Concerts")
                                 .categoryText(imageName: "music_category")
                         }
                         
                     }
                     HStack(spacing: 20) {
-                        NavigationLink(destination: TheatreCategoryView(viewModel: NearbyEventsViewModel())) {
+                        NavigationLink(destination: TheaterTypeView(viewModel: NearbyEventsViewModel())) {
                             Text("Theatre")
                                 .categoryText(imageName: "theatre_category")
                         }
