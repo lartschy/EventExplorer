@@ -6,20 +6,29 @@
 //
 
 import SwiftUI
-
-import SwiftUI
-
-import SwiftUI
+import MapKit
 
 struct EventView: View {
     let event: EventModel
     @StateObject private var viewModel = NearbyEventsViewModel()
+    
+    private var mapRegion: MKCoordinateRegion {
+           let latitude = Double(event.lat) ?? 0.0
+           let longitude = Double(event.lon) ?? 0.0
+           
+           return MKCoordinateRegion(
+               center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+               span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+           )
+    }    
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(event.name)
                 .font(.largeTitle)
                 .bold()
+                .lineLimit(nil) // Allow unlimited lines
+                .multilineTextAlignment(.leading) // Align text to the leading edge
             Text("Category: \(event.category)")
                 .font(.title2)
                 .foregroundColor(.gray)
@@ -36,7 +45,16 @@ struct EventView: View {
             Text("Date and Time: \(viewModel.formatDate(event.datetimeLocal))")
                 .font(.title3)
                 .foregroundColor(.gray)
+            
+            // Map view
+            Map(coordinateRegion: .constant(mapRegion), annotationItems: [event]) { event in
+                MapPin(coordinate: CLLocationCoordinate2D(latitude: Double(event.lat) ?? 0.0, longitude: Double(event.lon) ?? 0.0), tint: .red)
+            }
+            .frame(height: 200) // Set a fixed height for the map view
+            
+            
             Spacer()
+
             Button(action: {
                 if let url = URL(string: event.url) {
                     UIApplication.shared.open(url)
@@ -46,7 +64,6 @@ struct EventView: View {
             }
             .gradientButtonStyle()
             .padding(.top, 20)
-            Spacer()
         }
         .padding()
         .navigationTitle("Event Details")
