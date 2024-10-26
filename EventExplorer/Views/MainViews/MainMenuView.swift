@@ -8,16 +8,19 @@
 import Foundation
 import SwiftUI
 
+// Main menu view, where users can log in or navigate to the registration page
 struct MainMenuView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var isRegistrationActive: Bool = false
-    @State private var selectedNavigation: NavigationItem? = nil
-    
+    @State private var navigateToEventList = false
+
+    @ObservedObject var authViewModel: AuthViewModel
+
     enum NavigationItem {
         case eventList, registration
     }
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
@@ -25,16 +28,16 @@ struct MainMenuView: View {
                     .font(.title)
                     .fontWeight(.bold)
                     .padding(.top, 40)
-                
+
                 Spacer()
-                
+
                 Image("logo")
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: .infinity)
                     .cornerRadius(40)
                     .padding(.horizontal)
-                    
+
                 VStack(spacing: 20) {
                     Text("Explore the best events!")
                         .font(.title2)
@@ -54,33 +57,34 @@ struct MainMenuView: View {
                         .cornerRadius(100)
                         .padding(.horizontal)
 
-                    NavigationLink(destination: EventListView().navigationBarBackButtonHidden(true)) {
-                            Text("Sign In")
-                            .gradientButtonStyle()
+                    Button(action: {
+                        // Call signIn method from authViewModel
+                        authViewModel.signIn(email: email, password: password) { success in
+                            if success {
+                                navigateToEventList = true // Set navigation variable to true
+                            }
+                        }
+                    }) {
+                        Text("Sign In")
+                            .gradientButtonStyle() // Custom button style
                     }
-                    
+
+                    // Navigation Link for EventListView
+                    NavigationLink(destination: EventListView().navigationBarBackButtonHidden(true), isActive: $navigateToEventList) {
+                        EmptyView() // Hidden link
+                    }
+
                     Divider()
                         .background(Color.black)
-                    
-                    Text("New here? Register an account:")
-                    Button(action: {
-                        
-                    }) {
-                        NavigationLink(destination: RegistrationView()) {
-                            Text("Register")
-                                .gradientButtonStyle()
 
-                        }
-                        
+                    Text("New here? Register an account:")
+                    NavigationLink(destination: RegistrationView(authViewModel: authViewModel).navigationBarBackButtonHidden(true)) {
+                        Text("Register")
+                            .gradientButtonStyle() // Custom button style
                     }
                 }
             }
             .navigationBarHidden(true)
         }
     }
-}
-
-
-#Preview {
-    MainMenuView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }
