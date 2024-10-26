@@ -7,6 +7,9 @@
 
 import Foundation
 
+// Represents the root response from the SeatGeek API
 struct SeatGeekResponse: Codable {
+    
+    // An array of event objects retrieved from the API
     let events: [Event]
 }

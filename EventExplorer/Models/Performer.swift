@@ -7,12 +7,20 @@
 
 import Foundation
 
+// Represents a performer in an event
 struct Performer: Codable {
-    let name: String
-    let taxonomies: [Taxonomy]
     
+    // Name of the performer
+    let name: String
+    
+    // List of categories (taxonomies) associated with the performer
+    let taxonomies: [Taxonomy]
+
+    // Custom key mappings to match the JSON structure
     enum CodingKeys: String, CodingKey {
-        case name, taxonomies
+        case name
+        case taxonomies
     }
 }
+
 

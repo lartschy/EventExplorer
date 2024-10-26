@@ -8,39 +8,47 @@
 import Foundation
 import SwiftUI
 
+// Search view to display event categories
 struct SearchEventsView: View {
     @State private var searchText = ""
-    @State private var events: [EventModel] = []
+    @ObservedObject var profileViewModel: ProfileViewModel
+
     
+    // Events to be displayed (currently unused)
+    @State private var events: [EventModel] = []
+
     var body: some View {
         NavigationView {
             VStack {
+                // Vertical stack to display categories for browsing
                 VStack(spacing: 20) {
+                    // First row: sports and concerts
                     HStack(spacing: 20) {
-                        NavigationLink(destination: SportsTypeView(viewModel: NearbyEventsViewModel())) {
+                        // Navigates to sports category when clicked
+                        NavigationLink(destination: SportsTypeView(viewModel: NearbyEventsViewModel(), profileViewModel: profileViewModel)) {
                             Text("Sports")
-                                .categoryText(imageName: "sports_category")
+                                .categoryText(imageName: "sports_category")  // Reusable category text styling
                         }
-                        NavigationLink(destination: ConcertsTypeView(viewModel: NearbyEventsViewModel())) {
+                        // Navigates to concerts category
+                        NavigationLink(destination: ConcertsTypeView(viewModel: NearbyEventsViewModel(), profileViewModel: profileViewModel)) {
                             Text("Concerts")
                                 .categoryText(imageName: "music_category")
                         }
-                        
                     }
+                    // Second row: theater
                     HStack(spacing: 20) {
-                        NavigationLink(destination: TheaterTypeView(viewModel: NearbyEventsViewModel())) {
+                        NavigationLink(destination: TheaterTypeView(viewModel: NearbyEventsViewModel(), profileViewModel: profileViewModel)) {
                             Text("Theatre")
                                 .categoryText(imageName: "theatre_category")
                         }
-                        
                     }
-                    
                 }
                 .padding([.leading, .trailing], 20)
                 .padding(.bottom, 30)
             }
-            .navigationTitle("Browse Events")
-            .navigationBarBackButtonHidden(true)
+            .navigationTitle("Browse Events")  // Title for the view
+            .navigationBarBackButtonHidden(true)  // Hides the back button in the navigation bar
         }
     }
 }
+

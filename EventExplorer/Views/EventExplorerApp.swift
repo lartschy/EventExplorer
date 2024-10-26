@@ -9,19 +9,11 @@ import SwiftUI
 import SwiftData
 import FirebaseCore
 
-class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-
-    return true
-  }
-}
-
 @main
  struct EventExplorerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+    @StateObject private var authViewModel = AuthViewModel()
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             EventModel.self,
@@ -35,11 +27,20 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
     }()
 
-    var body: some Scene {
-        WindowGroup {
-            MainMenuView()
+     var body: some Scene {
+         WindowGroup {
+            MainMenuView(authViewModel: authViewModel)
                 .modelContainer(sharedModelContainer)
                 .accentColor(.black)
         }
     }
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+
+    return true
+  }
 }

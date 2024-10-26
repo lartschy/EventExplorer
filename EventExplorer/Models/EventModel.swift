@@ -47,7 +47,8 @@ final class EventModel: Identifiable {
     
     // Category of the event (e.g., music, sports)
     var category: String
-
+    
+    
     // Initializer to create an EventModel instance
     init(id: String, type: String, datetimeLocal: String, url: String, address: String, city: String, country: String, venue: String, lat: String, lon: String, name: String, category: String) {
         self.id = id

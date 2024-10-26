@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+// Model for the country selected by the user
+class CountryModel: ObservableObject {
+    @Published var selectedCountry: String = "Germany"
+}

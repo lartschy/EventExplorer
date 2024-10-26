@@ -9,37 +9,40 @@ import SwiftUI
 
 struct SportsTypeView: View {
     @StateObject private var viewModel: NearbyEventsViewModel
-    @State private var events: [EventModel] = []
-    
-    init(viewModel: NearbyEventsViewModel) {
+    @ObservedObject var profileViewModel: ProfileViewModel
+
+
+    init(viewModel: NearbyEventsViewModel, profileViewModel: ProfileViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.profileViewModel = profileViewModel
     }
+
     
     var body: some View {
             VStack {
                 VStack(spacing: 30) {
                     HStack() {
-                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: ["basketball", "mlb", "wnba"])) {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: ["basketball", "mlb", "wnba"]) ) {
                             Text("Basketball")
                                 .categoryText(imageName: "basketball_type")
                         }
                     }
                     
                     HStack() {
-                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: ["soccer", "mls", "ncaa_soccer"])) {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: ["soccer", "mls", "ncaa_soccer"])) {
                             Text("Soccer")
                                 .categoryText(imageName: "soccer_type")
                         }
                     }
                     HStack() {
-                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: ["nfl", "football"])) {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: ["nfl", "football"])) {
                             Text("American Football")
                                 .categoryText(imageName: "football_type")
                         }
                     }
                     
                     HStack() {
-                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, types: nil)) {
+                        NavigationLink(destination: SportsCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: nil)) {
                             Text("All Sports")
                                 .categoryText(imageName: "all_sports_type")
                         }
@@ -81,6 +84,4 @@ struct SportsTypeView: View {
             .navigationTitle("Sport Events")
             .navigationBarBackButtonHidden(false)
         }
-    
-    
 }

@@ -10,62 +10,54 @@ import SwiftUI
 struct ConcertsCategoryView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: NearbyEventsViewModel
-    @State private var selectedCountry: String = "Germany"
+    
+    // Observing profile view model
+    @ObservedObject var profileViewModel: ProfileViewModel
+    
     let types: [String]?
 
-    let countries = [
-        // America
-        "US", "Canada", "Mexico", "Brazil", "Argentina", "Colombia", "Peru", "Chile",
-        // Europe
-        "United Kingdom", "Germany", "France", "Spain", "Italy", "Netherlands", "Switzerland", "Belgium",
-        "Austria", "Sweden", "Norway", "Denmark", "Finland", "Poland", "Greece", "Portugal", "Czech Republic",
-        "Ireland", "Hungary", "Romania", "Ukraine", "Slovakia", "Croatia", "Bulgaria", "Lithuania", "Latvia",
-        "Estonia", "Slovenia", "Luxembourg", "Malta", "Cyprus"
-    ]
-
-    init(viewModel: NearbyEventsViewModel, types: [String]?) {
+    init(viewModel: NearbyEventsViewModel, profileViewModel: ProfileViewModel, types: [String]?) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.profileViewModel = profileViewModel
         self.types = types
     }
 
     var body: some View {
-            VStack {
-                HStack {
-                    SearchBar(searchText: $viewModel.searchText)
-                    Picker("Select Country", selection: $selectedCountry) {
-                        ForEach(countries, id: \.self) { country in
-                            Text(country).tag(country)
-                        }
+        VStack(spacing: 0) {
+            HStack {
+                SearchBar(searchText: $viewModel.searchText)
+                Picker("Select Country", selection: $profileViewModel.selectedCountry) {
+                    ForEach(profileViewModel.countries, id: \.self) { country in
+                        Text(country).tag(country)
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    .padding(.leading, 10)
-                }
-                .padding(.horizontal)
-                
-                ScrollView {
-                    VStack(alignment: .center, spacing: 25) {
-                        if viewModel.filteredEvents.isEmpty {
-                            Text("No Concert Events Available")
-                                .font(.headline)
-                                .foregroundColor(.gray)
-                                .padding()
-                        } else {
-                            ForEach(viewModel.filteredEvents, id: \.id) { event in
-                                EventRowView(event: event, viewModel: viewModel)
-                            }
-                        }
-                    }
-                    .padding()
-                }
-                .navigationTitle("Concert Events")
-                .onAppear {
-                    viewModel.fetchDataCategoryAndTypes(category: "concerts", types: types, for: selectedCountry)
-                }
-                .onChange(of: selectedCountry) { newCountry in
-                    viewModel.fetchDataCategoryAndTypes(category: "concerts", types: types, for: selectedCountry)
                 }
             }
-        
+            .padding(.horizontal)
+            
+            ScrollView {
+                VStack(alignment: .center, spacing: 25) {
+                    if viewModel.filteredEvents.isEmpty {
+                        Text("No Concert Events Available")
+                            .font(.headline)
+                            .foregroundColor(.gray)
+                            .padding()
+                    } else {
+                        ForEach(viewModel.filteredEvents, id: \.id) { event in
+                            EventRowView(event: event, viewModel: viewModel)
+                        }
+                    }
+                }
+                .padding()
+            }
+            .navigationTitle("Concert Events")
+            .onAppear {
+                // Fetch events using the selected country from the ProfileViewModel
+                viewModel.fetchDataCategoryAndTypes(category: "concerts", types: types, for: profileViewModel.selectedCountry)
+            }
+            .onChange(of: profileViewModel.selectedCountry) { newCountry in
+                viewModel.fetchDataCategoryAndTypes(category: "concerts", types: types, for: profileViewModel.selectedCountry)
+            }
+        }
     }
 }
 

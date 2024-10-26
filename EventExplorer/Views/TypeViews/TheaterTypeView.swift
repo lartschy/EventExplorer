@@ -9,37 +9,39 @@ import SwiftUI
 
 struct TheaterTypeView: View {
     @StateObject private var viewModel: NearbyEventsViewModel
-    @State private var events: [EventModel] = []
-    
-    init(viewModel: NearbyEventsViewModel) {
+    @ObservedObject var profileViewModel: ProfileViewModel
+
+
+    init(viewModel: NearbyEventsViewModel, profileViewModel: ProfileViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.profileViewModel = profileViewModel
     }
     
     var body: some View {
             VStack {
                 VStack(spacing: 30) {
                     HStack() {
-                        NavigationLink(destination: TheatreCategoryView(viewModel: viewModel, types: ["broadway"])) {
+                        NavigationLink(destination: TheatreCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: ["broadway"])) {
                             Text("Broadway")
                                 .categoryText(imageName: "broadway_type")
                         }
                     }
                     
                     HStack() {
-                        NavigationLink(destination: TheatreCategoryView(viewModel: viewModel, types: ["comedy"])) {
+                        NavigationLink(destination: TheatreCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: ["comedy"])) {
                             Text("Comedy")
                                 .categoryText(imageName: "comedy_type")
                         }
                     }
                     HStack() {
-                        NavigationLink(destination: TheatreCategoryView(viewModel: viewModel, types: ["family"])) {
+                        NavigationLink(destination: TheatreCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: ["family"])) {
                             Text("Family")
                                 .categoryText(imageName: "family_type")
                         }
                     }
                     
                     HStack() {
-                        NavigationLink(destination: ConcertsCategoryView(viewModel: viewModel, types: nil)) {
+                        NavigationLink(destination: TheatreCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: nil)) {
                             Text("All Theater Events")
                                 .categoryText(imageName: "all_theater_type")
                         }
@@ -53,6 +55,4 @@ struct TheaterTypeView: View {
             .navigationTitle("Theater Events")
             .navigationBarBackButtonHidden(false)
         }
-    
-    
 }
