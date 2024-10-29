@@ -10,11 +10,15 @@ import MapKit
 
 // The detailed view for a single event
 struct EventView: View {
-    let event: EventModel  // The event being displayed
-    @StateObject private var viewModel = NearbyEventsViewModel()  // ViewModel for fetching and formatting event data
+    // The event being displayed
+    let event: EventModel
+    
+    // ViewModel for fetching and formatting event data
+    @StateObject private var viewModel = NearbyEventsViewModel()
 
     // Computes the map region centered on the event's latitude and longitude
     private var mapRegion: MKCoordinateRegion {
+        
         // Convert the event's lat/lon strings to Double values; default to 0 if conversion fails
         let latitude = Double(event.lat) ?? 0.0
         let longitude = Double(event.lon) ?? 0.0
@@ -79,9 +83,10 @@ struct EventView: View {
                     UIApplication.shared.open(url)  // Open the event's URL in a browser
                 }
             }) {
-                Text("View on Website")  // Button label
+                // Button label
+                Text("View on Website")
             }
-            .gradientButtonStyle()  // Apply a gradient button style (assuming custom styling is defined elsewhere)
+            .buttonStyle(GradientButtonStyle()) // Apply GradientButtonStyle for the button
             .padding(.top, 20)  // Adds top padding to space the button from other content
         }
         .padding()  // Adds padding around the entire VStack

@@ -9,54 +9,73 @@ import Foundation
 import SwiftUI
 import Combine
 import CoreLocation
+import FirebaseAuth
 
 // ViewModel responsible for managing and fetching event data
 class NearbyEventsViewModel: ObservableObject {
     
     // Published properties to update the SwiftUI views
-    @Published var events: [EventModel] = []
-    @Published var searchText: String = ""
+    @Published var events: [EventModel] = []  // Stores the list of events
+    @Published var searchText: String = ""     // Holds the search query text
     
-    @AppStorage("favourites") private var favouritesData: String = ""  // Store JSON string
-
-    // Function to decode JSON string to a dictionary
-    private func loadFavourites() -> [String: Bool] {
+    // Store JSON string
+    @AppStorage("favourites") private var favouritesData: String = ""
+    
+    // Store the user ID (uid) here
+    private var uid: String?
+    
+    // Initialize with the Firebase uid
+    init() {
+        self.uid = Auth.auth().currentUser?.uid
+    }
+    
+    // Function to decode JSON string to a dictionary of dictionaries keyed by uid
+    private func loadFavourites() -> [String: [String: Bool]] {
         guard let data = favouritesData.data(using: .utf8) else { return [:] }
-        let favourites = (try? JSONDecoder().decode([String: Bool].self, from: data)) ?? [:]
+        let favourites = (try? JSONDecoder().decode([String: [String: Bool]].self, from: data)) ?? [:]
         return favourites
     }
 
     // Function to encode dictionary to JSON string
-    private func saveFavourites(_ favourites: [String: Bool]) {
+    private func saveFavourites(_ favourites: [String: [String: Bool]]) {
         if let data = try? JSONEncoder().encode(favourites),
             let json = String(data: data, encoding: .utf8) {
-            favouritesData = json
+            favouritesData = json // Save the JSON string to AppStorage
         }
     }
 
     // Toggle favorite status for an event
     func toggleFavourite(for eventId: String) {
+        guard let uid = self.uid else { return }  // Make sure uid is available
         var favourites = loadFavourites()
-        favourites[eventId] = !(favourites[eventId] ?? false)
-        saveFavourites(favourites)
+        var userFavourites = favourites[uid] ?? [:]  // Get favorites for the current user
+            
+        // Toggle the favorite status
+        userFavourites[eventId] = !(userFavourites[eventId] ?? false)
+                    
+        favourites[uid] = userFavourites // Update favorites for the user
+        saveFavourites(favourites) // Save updated favorites
     }
 
-    // Check if an event is a favorite
+    // Check if an event is a favorite for the current user
     func isFavourite(eventId: String) -> Bool {
-        return loadFavourites()[eventId] ?? false
+        guard let uid = self.uid else { return false }
+        let userFavourites = loadFavourites()[uid] ?? [:] // Get user's favorites
+        return userFavourites[eventId] ?? false // Return true if event is a favorite
     }
 
-    // Fetch favorite events
+    // Fetch favorite events for the current user
     func getFavouriteEvents(from events: [EventModel]) -> [EventModel] {
-        return events.filter { isFavourite(eventId: $0.id) }
+        return events.filter { isFavourite(eventId: $0.id) } // Filter events that are marked as favorites
     }
     
     // Computed property for filtering events based on search input
     var filteredEvents: [EventModel] {
         if searchText.isEmpty {
-            return events
+            return events // Return all events if no search text
         } else {
             return events.filter { event in
+                // Filter events based on search text matching name, city, country, or category
                 event.name.localizedCaseInsensitiveContains(searchText) ||
                 event.city.localizedCaseInsensitiveContains(searchText) ||
                 event.country.localizedCaseInsensitiveContains(searchText) ||
@@ -71,7 +90,7 @@ class NearbyEventsViewModel: ObservableObject {
         APIService.shared.fetchData(country: country) { [weak self] fetchedEvents in
             print("fetchData() completion block reached")
             DispatchQueue.main.async {
-                self?.events = fetchedEvents
+                self?.events = fetchedEvents // Update events with fetched data
             }
         }
     }
@@ -79,9 +98,10 @@ class NearbyEventsViewModel: ObservableObject {
     // Fetch event data filtered by category for a specific country
     func fetchDataCategory(_ category: String, for country: String) {
         APIService.shared.fetchData(country: country) { [weak self] fetchedEvents in
+            // Filter by category
             let filteredEvents = fetchedEvents.filter { $0.category == category }
             DispatchQueue.main.async {
-                self?.events = filteredEvents
+                self?.events = filteredEvents // Update events with filtered data
             }
             print("Fetched data block for category:", category)
         }
@@ -100,7 +120,7 @@ class NearbyEventsViewModel: ObservableObject {
             }
             
             DispatchQueue.main.async {
-                self?.events = filteredEvents
+                self?.events = filteredEvents // Update events with filtered data
             }
             
             print("Fetched events for category:", category, "and types:", types ?? ["All Types"])

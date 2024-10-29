@@ -10,18 +10,23 @@ import SwiftUI
 
 // Registration view for new users to create an account
 struct RegistrationView: View {
-    // State variables to control alerts and navigation
+    // Observable view model handling authentication logic and data binding
+    @ObservedObject var authViewModel: AuthViewModel
+    
+    // State variable to control alert presentation
     @State private var showingAlert = false
+    
+    // State variable to store alert messages (error or success messages)
+    @State private var alertMessage = ""
+    
+    // State variable to handle navigation to MainMenuView
     @State private var navigateToMainMenu = false
 
-    // User input fields for registration details
-    @ObservedObject var authViewModel: AuthViewModel
-    @State private var passwordAgain: String = ""
-
     var body: some View {
-        // Navigation view for the registration screen
         NavigationView {
             VStack(spacing: 30) {
+                
+                // Email input field
                 VStack(spacing: 10) {
                     Text("Email address")
                         .font(.headline)
@@ -32,6 +37,7 @@ struct RegistrationView: View {
                         .padding(.horizontal)
                 }
 
+                // Password input field
                 VStack(spacing: 10) {
                     Text("Password")
                         .font(.headline)
@@ -42,49 +48,60 @@ struct RegistrationView: View {
                         .padding(.horizontal)
                 }
 
+                // Password confirmation input field
                 VStack(spacing: 10) {
                     Text("Password Again")
                         .font(.headline)
-                    SecureField("Password Again", text: $passwordAgain)
+                    SecureField("Password Again", text: $authViewModel.passwordAgain) // Using passwordAgain directly from the view model
                         .padding()
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(100)
                         .padding(.horizontal)
                 }
-                
-                Spacer()
 
+                Spacer() // Spacer to create some space before the register button
+
+                // Register button
                 Button(action: {
-                    authViewModel.register()
-        
-                    // Check registration success and show alert
-                    if authViewModel.registrationSuccess {
-                        showingAlert = true
-                    }
+                    authViewModel.register() // Calls register function in AuthViewModel
                 }) {
                     Text("Register")
-                        .gradientButtonStyle()
                 }
+                .buttonStyle(GradientButtonStyle())
+                
+                // Alert for displaying success or error messages
                 .alert(isPresented: $showingAlert) {
                     Alert(
-                        title: Text("Success"),
-                        message: Text("Registration Successful!"),
+                        title: Text(authViewModel.registrationSuccess ? "Success" : "Registration Error"),
+                        message: Text(alertMessage),
                         dismissButton: .default(Text("OK"), action: {
-                            navigateToMainMenu = true // Navigate back on dismiss
+                            if authViewModel.registrationSuccess {
+                                navigateToMainMenu = true // Navigate to MainMenuView on success
+                            }
                         })
                     )
                 }
-                
-                // Navigation Link for MainMenuView
+
+                // Navigation link to MainMenuView
                 NavigationLink(destination: MainMenuView(authViewModel: authViewModel).navigationBarBackButtonHidden(true), isActive: $navigateToMainMenu) {
-                    EmptyView()
+                    EmptyView() // Empty view to hold the navigation link
                 }
-                .navigationTitle("Registration") // Title of the registration screen
+                .navigationTitle("Registration") // Title for the navigation bar
             }
-            // Listen for changes to registration success and show alert
-            .onReceive(authViewModel.$registrationSuccess) { success in
+            
+            // Listen for changes in authError to display an error alert
+            .onChange(of: authViewModel.authError) { error in
+                if let error = error {
+                    alertMessage = error.message // Set the alert message with error details
+                    showingAlert = true // Show alert for error
+                }
+            }
+            
+            // Listen for changes in registrationSuccess to display a success alert
+            .onChange(of: authViewModel.registrationSuccess) { success in
                 if success {
-                    showingAlert = true
+                    alertMessage = "Registration Successful!" // Set success message
+                    showingAlert = true // Show success alert
                 }
             }
         }

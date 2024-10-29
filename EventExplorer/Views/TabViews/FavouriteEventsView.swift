@@ -9,9 +9,7 @@ import SwiftUI
 
 // Favourites view to display event categories
 struct FavouriteEventsView: View {
-    // Environment property to access shared data context (if needed for persistence or Core Data)
-    @Environment(\.modelContext) private var modelContext
-    
+
     // StateObject to observe the ViewModel for this view
     @StateObject private var viewModel: NearbyEventsViewModel
     

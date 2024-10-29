@@ -13,12 +13,13 @@ struct ProfileView: View {
     // Controls whether the logout alert is shown
     @State private var showAlert = false
     
-    // Controls navigation to main menu
+    // Controls navigation to the main menu after logout
     @State private var navigateToMainMenu = false
-    
-    // View model for managing country selection
+
+    // ViewModel for managing country selection and other profile-related settings
     @ObservedObject var profileViewModel: ProfileViewModel
     
+    // ViewModel for handling user authentication, including login and logout functions
     @ObservedObject var authViewModel: AuthViewModel
     
     var body: some View {
@@ -27,12 +28,14 @@ struct ProfileView: View {
             Text("User Profile")
                 .font(.title)
                 .fontWeight(.bold)
-                .padding(.top, 40) // Adds top padding for spacing
-            
+                .padding(.top, 40)
+                .accessibilityAddTraits(.isHeader) // Accessibility header for page title
+                
             // Country selection label
             Text("Select your country:")
                 .font(.headline)
                 .padding(.top, 20)
+                .accessibilityLabel(Text("Select your country"))
             
             // Country selector (e.g., a Picker)
             Picker("Select Country", selection: $profileViewModel.selectedCountry) {
@@ -42,22 +45,26 @@ struct ProfileView: View {
             }
             .pickerStyle(MenuPickerStyle())
             .padding()
+            .accessibilityLabel(Text("Country Picker"))
             
             Spacer() // Pushes the logout button to the bottom
             
-            logoutButton // Custom logout button view
+            // Logout button using the custom GradientButtonStyle
+            Button(action: { showAlert = true }) {
+                Text("Logout")
+                    .accessibilityLabel(Text("Logout Button"))
+            }
+            .buttonStyle(GradientButtonStyle()) // Apply custom button style
             
-            Spacer()
         }
         .alert(isPresented: $showAlert) {
             // Shows a confirmation alert for logging out
             Alert(
                 title: Text("Logout"),
                 message: Text("Are you sure you want to logout?"),
-                primaryButton: .cancel(), // Cancel button
+                primaryButton: .cancel(),
                 secondaryButton: .destructive(Text("Logout"), action: {
-                    // If logout is confirmed, set navigation flag to true
-                    authViewModel.logout() // Call your logout method
+                    authViewModel.logout() // Call the logout method in the authentication ViewModel
                     navigateToMainMenu = true
                 })
             )
@@ -65,35 +72,9 @@ struct ProfileView: View {
         
         // Navigates to main menu when the user confirms logout
         .background(
-            NavigationLink(destination: MainMenuView(authViewModel: authViewModel), isActive: $navigateToMainMenu) {
+            NavigationLink(destination: MainMenuView(authViewModel: authViewModel).navigationBarBackButtonHidden(true), isActive: $navigateToMainMenu) {
                 EmptyView()
             }
         )
     }
-
-    // Custom button for logging out
-    private var logoutButton: some View {
-        Button(action: {
-            showAlert = true // Shows the logout confirmation alert
-        }) {
-            Text("Logout")
-                .font(.title3)
-                .frame(maxWidth: .some(150)) // Sets a fixed width for the button
-                .padding()
-                .foregroundColor(.white)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color(red: 1.0, green: 0.6, blue: 0.8),
-                            Color(red: 1.0, green: 0.8, blue: 0.6)
-                        ]),
-                        startPoint: .bottomLeading,
-                        endPoint: .topTrailing
-                    )
-                )
-                .cornerRadius(100) // Rounded corners for the button
-                .padding(.horizontal)
-        }
-    }
 }
-

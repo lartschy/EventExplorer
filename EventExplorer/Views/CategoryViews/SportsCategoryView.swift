@@ -8,15 +8,21 @@
 import Foundation
 import SwiftUI
 
+// View for displaying sports events by category in the selected country
 struct SportsCategoryView: View {
+    // Environment property to access shared data context if needed (e.g., for persistence or Core Data)
     @Environment(\.modelContext) private var modelContext
+    
+    // StateObject to observe and manage the NearbyEventsViewModel, which handles event data fetching
     @StateObject private var viewModel: NearbyEventsViewModel
     
-    // Observing profile view model
+    // ObservedObject for the ProfileViewModel to track the selected country and related data
     @ObservedObject var profileViewModel: ProfileViewModel
     
+    // Optional array of event types to further filter sports events (e.g., basketball, soccer, etc.)
     let types: [String]?
 
+    // Custom initializer to inject the ViewModels and event types
     init(viewModel: NearbyEventsViewModel, profileViewModel: ProfileViewModel, types: [String]?) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.profileViewModel = profileViewModel
@@ -25,8 +31,12 @@ struct SportsCategoryView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Top section with search bar and country picker
             HStack {
+                // Search bar bound to the ViewModel's search text
                 SearchBar(searchText: $viewModel.searchText)
+                
+                // Country selection picker, bound to the ProfileViewModel's selected country
                 Picker("Select Country", selection: $profileViewModel.selectedCountry) {
                     ForEach(profileViewModel.countries, id: \.self) { country in
                         Text(country).tag(country)
@@ -35,14 +45,17 @@ struct SportsCategoryView: View {
             }
             .padding(.horizontal)
             
+            // Scrollable list of sports events
             ScrollView {
                 VStack(alignment: .center, spacing: 25) {
+                    // Message when no events are available
                     if viewModel.filteredEvents.isEmpty {
                         Text("No Sport Events Available")
                             .font(.headline)
                             .foregroundColor(.gray)
                             .padding()
                     } else {
+                        // Display each event in an EventRowView
                         ForEach(viewModel.filteredEvents, id: \.id) { event in
                             EventRowView(event: event, viewModel: viewModel)
                         }
@@ -50,16 +63,15 @@ struct SportsCategoryView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Sport Events")
-            .accentColor(.red)
-
-
+            .navigationTitle("Sport Events") // Title in the navigation bar
+            
             .onAppear {
-                // Fetch events using the selected country from the CountryModel
+                // Fetch sports events when the view appears, based on selected country and types
                 viewModel.fetchDataCategoryAndTypes(category: "sports", types: types, for: profileViewModel.selectedCountry)
             }
             .onChange(of: profileViewModel.selectedCountry) { newCountry in
-                viewModel.fetchDataCategoryAndTypes(category: "sports", types: types, for: profileViewModel.selectedCountry)
+                // Fetch sports events again if the selected country changes
+                viewModel.fetchDataCategoryAndTypes(category: "sports", types: types, for: newCountry)
             }
         }
     }

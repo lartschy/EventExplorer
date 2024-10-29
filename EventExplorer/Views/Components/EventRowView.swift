@@ -8,11 +8,15 @@
 import Foundation
 import SwiftUI
 
-// The view for a single event in the event list
+// The view for displaying a single event in the event list
 struct EventRowView: View {
+    // The event data model to display
     let event: EventModel
-    @ObservedObject var viewModel: NearbyEventsViewModel  // Use @ObservedObject to observe changes in the ViewModel
-
+    
+    // Use @ObservedObject to observe changes in the ViewModel
+    @ObservedObject var viewModel: NearbyEventsViewModel
+    
+    // Local state to track if the event is a favorite
     @State private var isFavorite: Bool = false
 
     var body: some View {
@@ -23,6 +27,7 @@ struct EventRowView: View {
                         .font(.headline)
                         .multilineTextAlignment(.leading)
 
+                    // Pushes the favorite button to the right
                     Spacer()
 
                     Button(action: {
@@ -30,6 +35,7 @@ struct EventRowView: View {
                         isFavorite.toggle()  // Immediately update local state
                         viewModel.toggleFavourite(for: event.id)  // Update the ViewModel
                     }) {
+                        // Heart icon indicating favorite status
                         Image(systemName: isFavorite ? "heart.fill" : "heart")
                             .foregroundColor(.black)
                             .imageScale(.large)
@@ -39,7 +45,7 @@ struct EventRowView: View {
                             .shadow(radius: 10)
                     }
                 }
-
+                // Display formatted date
                 Text(viewModel.formatDate(event.datetimeLocal))
                     .font(.subheadline)
                     .foregroundColor(.white)
@@ -84,6 +90,7 @@ struct EventRowView: View {
             .shadow(radius: 10)
         }
         .onAppear {
+            // Check if the event is a favorite when the view appears
             isFavorite = viewModel.isFavourite(eventId: event.id)
         }
     }

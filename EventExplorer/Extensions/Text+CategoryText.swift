@@ -8,7 +8,9 @@
 import Foundation
 import SwiftUI
 
+// Extension to style Text as a category header with a background image and gradient overlay
 extension Text {
+    // Styles the Text as a category header with a background image, gradient overlay, and customizable properties
     func categoryText(imageName: String) -> some View {
         self
             .font(.system(size: 30, weight: .bold))

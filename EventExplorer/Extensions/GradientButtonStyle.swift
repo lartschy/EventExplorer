@@ -7,24 +7,27 @@
 
 import SwiftUI
 
-import SwiftUI
+// Custom button style with gradient background, white text, and rounded corners
+struct GradientButtonStyle: ButtonStyle {
+    var colors: [Color] = [
+        Color(red: 1.0, green: 0.6, blue: 0.8),
+        Color(red: 1.0, green: 0.8, blue: 0.6)
+    ]
+    var cornerRadius: CGFloat = 100
+    var fontSize: Font = .title3
+    var horizontalPadding: CGFloat = 16
 
-struct GradientButtonStyle: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .font(.title3)
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(fontSize)
             .frame(maxWidth: .infinity)
             .padding()
             .foregroundColor(.white)
             .background(
-                LinearGradient(gradient: Gradient(colors: [Color(red: 1.0, green: 0.6, blue: 0.8), Color(red: 1.0, green: 0.8, blue: 0.6)]), startPoint: .bottomLeading, endPoint: .topTrailing))
-            .cornerRadius(100)
-            .padding(.horizontal)
-    }
-}
-
-extension View {
-    func gradientButtonStyle() -> some View {
-        self.modifier(GradientButtonStyle())
+                LinearGradient(gradient: Gradient(colors: colors), startPoint: .bottomLeading, endPoint: .topTrailing)
+            )
+            .cornerRadius(cornerRadius)
+            .padding(.horizontal, horizontalPadding)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0) // Adds a subtle scaling effect when pressed
     }
 }

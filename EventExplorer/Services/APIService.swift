@@ -14,8 +14,14 @@ class APIService {
     // Singleton instance of APIService
     static let shared = APIService()
     
-    // API key for authentication (consider moving to a more secure location)
-    private let apiKey = "NDE2OTI5MTh8MTcxNjExNTExOS41MTkwMTUz"
+    // Computed property to fetch the API key from Secrets.plist
+    private var apiKey: String? {
+        if let path = Bundle.main.path(forResource: "Secrets", ofType: "plist"),
+            let dictionary = NSDictionary(contentsOfFile: path) {
+            return dictionary["API_KEY"] as? String
+        }
+        return nil
+    }
     
     // Base URL for the SeatGeek API
     private let baseURL = "https://api.seatgeek.com/2/events"
@@ -34,6 +40,12 @@ class APIService {
         // Build the URL components
         guard var urlComponents = URLComponents(string: baseURL) else {
             print("Invalid base URL")
+            return
+        }
+        
+        // Ensure the API key exists
+        guard let apiKey = apiKey else {
+            print("API key is missing")
             return
         }
         

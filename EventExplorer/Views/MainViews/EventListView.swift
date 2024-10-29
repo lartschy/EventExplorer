@@ -57,7 +57,7 @@ struct EventListView: View {
 
 
 #Preview {
-    EventListView()/*.environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)*/
+    EventListView()
         .modelContainer(for: EventModel.self, inMemory: true)
 }
 
