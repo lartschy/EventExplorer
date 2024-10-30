@@ -79,12 +79,16 @@ struct MainMenuView: View {
                     // Apply GradientButtonStyle for the button
                     .buttonStyle(GradientButtonStyle())
                     
+                    NavigationLink(destination: EventListView().navigationBarBackButtonHidden(true), isActive: $navigateToEventList) {
+                        EmptyView() // No visible link; it’s just used for navigation
+                    }
+
                     Divider()
                         .background(Color.black)
 
                     // Registration prompt
                     Text("New here? Register an account:")
-                    NavigationLink(destination: RegistrationView(authViewModel: authViewModel)) {
+                    NavigationLink(destination: RegistrationView(authViewModel: authViewModel).navigationBarBackButtonHidden(false)) {
                         Text("Register")
                     }
                     // Apply GradientButtonStyle for the button
