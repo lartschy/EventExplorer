@@ -12,13 +12,9 @@ import Network
 
 // ViewModel responsible for authentication logic
 class AuthViewModel: ObservableObject {
-    // The user's email address
+    // The user's email address and password
     @Published var email: String = ""
-        
-    // The user's password
     @Published var password: String = ""
-        
-    // Confirm password field
     @Published var passwordAgain: String = ""
         
     // Indicates if the user is authenticated
@@ -28,27 +24,25 @@ class AuthViewModel: ObservableObject {
     @Published var authError: IdentifiableError?
 
     // Indicates if registration was successful
-     @Published var registrationSuccess: Bool = false
-
-
+    @Published var registrationSuccess: Bool = false
 
     func register() {
         // Check if the email format is valid
         if !isValidEmail(email) {
-            self.authError = IdentifiableError(message: "Invalid email format.") // Set error message for invalid email
-            return // Exit the function if the email is invalid
+            self.authError = IdentifiableError(message: "Invalid email format.")
+            return
         }
 
         // Check if the password meets minimum length requirements
         if !isValidPassword(password) {
-            self.authError = IdentifiableError(message: "Password must be at least 6 characters.") // Set error message for invalid password
-            return // Exit the function if the password is too short
+            self.authError = IdentifiableError(message: "Password must be at least 6 characters.")
+            return
         }
 
         // Check if the password and password confirmation match
         if password != passwordAgain {
-            self.authError = IdentifiableError(message: "Passwords do not match.") // Set error message if passwords do not match
-            return // Exit the function if the passwords do not match
+            self.authError = IdentifiableError(message: "Passwords do not match.")
+            return
         }
 
         // Call the authentication manager to register the user
@@ -57,12 +51,12 @@ class AuthViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self?.isAuthenticated = true // Set authentication status to true on successful registration
-                    self?.registrationSuccess = true // Mark registration as successful
-                    self?.authError = nil // Clear any existing error messages
+                    self?.isAuthenticated = true
+                    self?.registrationSuccess = true
+                    self?.authError = nil
                 case .failure(let error):
-                    self?.authError = IdentifiableError(message: error.localizedDescription) // Set error message based on the failure reason
-                    self?.registrationSuccess = false // Mark registration as unsuccessful
+                    self?.authError = IdentifiableError(message: error.localizedDescription)
+                    self?.registrationSuccess = false
                 }
             }
         }
@@ -70,42 +64,46 @@ class AuthViewModel: ObservableObject {
 
     // Helper function to validate email format
     private func isValidEmail(_ email: String) -> Bool {
-        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}" // Regular expression for validating email
-        let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegex) // Predicate to test the email against the regex
-        return emailTest.evaluate(with: email) // Return true if the email matches the regex, false otherwise
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}"
+        let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        return emailTest.evaluate(with: email)
     }
 
     // Helper function to validate password length
     private func isValidPassword(_ password: String) -> Bool {
-        return password.count >= 6 // Return true if the password is at least 6 characters long
+        return password.count >= 6
     }
     
     // Function to check network connectivity once and stop monitoring
-        func isConnectedToNetwork(completion: @escaping (Bool) -> Void) {
-            let monitor = NWPathMonitor()
-            let queue = DispatchQueue(label: "NetworkMonitor")
-            
-            monitor.pathUpdateHandler = { path in
-                completion(path.status == .satisfied)
-                monitor.cancel() // Stop monitoring after status check
-            }
-            monitor.start(queue: queue)
+    func isConnectedToNetwork(completion: @escaping (Bool) -> Void) {
+        let monitor = NWPathMonitor()
+        let queue = DispatchQueue(label: "NetworkMonitor")
+        
+        monitor.pathUpdateHandler = { path in
+            completion(path.status == .satisfied)
+            monitor.cancel()
         }
+        monitor.start(queue: queue)
+    }
 
-        // Sign-in function with network check
-        func signIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
-            isConnectedToNetwork { isConnected in
-                guard isConnected else {
-                    // No internet connection
+    // Sign-in function with network check
+    func signIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
+        isConnectedToNetwork { isConnected in
+            guard isConnected else {
+                // Update authError on the main thread if there's no internet connection
+                DispatchQueue.main.async {
                     self.authError = IdentifiableError(message: "No internet connection. Please check your network and try again.")
-                    completion(false)
-                    return
                 }
+                completion(false)
+                return
+            }
 
-                // Firebase Auth sign-in
-                Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            // Firebase Auth sign-in
+            Auth.auth().signIn(withEmail: email, password: password) { result, error in
+                DispatchQueue.main.async {
                     if let error = error {
                         print("Sign in error: \(error.localizedDescription)")
+                        // Set error message for incorrect email or password
                         self.authError = IdentifiableError(message: "Incorrect email or password.")
                         completion(false)
                         return
@@ -114,6 +112,8 @@ class AuthViewModel: ObservableObject {
                 }
             }
         }
+    }
+
     
     // Function to sign out a user
     func logout() {
@@ -122,7 +122,7 @@ class AuthViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self?.isAuthenticated = false // Set authenticated status to false
+                    self?.isAuthenticated = false
                 case .failure(let error):
                     // Capture sign-out error
                     self?.authError = IdentifiableError(message: error.localizedDescription)
