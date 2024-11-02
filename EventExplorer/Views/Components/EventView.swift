@@ -16,9 +16,11 @@ struct EventView: View {
     // ViewModel for fetching and formatting event data
     @StateObject private var viewModel = NearbyEventsViewModel()
 
+    // State to show the action sheet
+    @State private var showingActionSheet = false
+
     // Computes the map region centered on the event's latitude and longitude
     private var mapRegion: MKCoordinateRegion {
-        
         // Convert the event's lat/lon strings to Double values; default to 0 if conversion fails
         let latitude = Double(event.lat) ?? 0.0
         let longitude = Double(event.lon) ?? 0.0
@@ -26,8 +28,33 @@ struct EventView: View {
         // Create a region centered on the event's coordinates with a defined span (zoom level)
         return MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
-            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)  // Span determines the zoom level
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         )
+    }
+
+    // Helper function to open the address in the selected map app
+    private func openInMapApp(_ app: String) {
+        let address = event.address.replacingOccurrences(of: " ", with: "+")
+        let query = "\(event.venue), \(event.city), \(event.country)"
+        
+        let urlString: String
+        switch app {
+        case "Apple Maps":
+            urlString = "http://maps.apple.com/?q=\(query)"
+        case "Google Maps":
+            urlString = "comgooglemaps://?q=\(query)"
+        default:
+            return
+        }
+
+        if let url = URL(string: urlString), UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        } else if app == "Google Maps" {
+            // Fallback to Google Maps website if the app is not installed
+            if let webURL = URL(string: "https://www.google.com/maps/search/?api=1&query=\(address)") {
+                UIApplication.shared.open(webURL)
+            }
+        }
     }
 
     var body: some View {
@@ -51,15 +78,34 @@ struct EventView: View {
             Text("Venue: \(event.venue)")
                 .font(.title3)
 
-            // Address information
-            Text("Address: \(event.address)")
-                .font(.title3)
+            // Address information with clickable text
+            HStack {
+                Text("Address:")
+                    .font(.title3)
+                Button(action: {
+                    showingActionSheet = true
+                }) {
+                    Text(event.address)
+                        .font(.title3)
+                        .foregroundColor(.blue)
+                        .underline()
+                }
+            }
+            .actionSheet(isPresented: $showingActionSheet) {
+                ActionSheet(
+                    title: Text("Open Address"),
+                    message: Text("Choose an app to open the address in:"),
+                    buttons: [
+                        .default(Text("Apple Maps")) { openInMapApp("Apple Maps") },
+                        .default(Text("Google Maps")) { openInMapApp("Google Maps") },
+                        .cancel()
+                    ]
+                )
+            }
 
-            // City information
+            // City and Country information
             Text("City: \(event.city)")
                 .font(.title3)
-
-            // Country information
             Text("Country: \(event.country)")
                 .font(.title3)
 
@@ -70,27 +116,25 @@ struct EventView: View {
 
             // Map view showing the event's location
             Map(coordinateRegion: .constant(mapRegion), annotationItems: [event]) { event in
-                // Places a red pin at the event's location
                 MapPin(coordinate: CLLocationCoordinate2D(latitude: Double(event.lat) ?? 0.0, longitude: Double(event.lon) ?? 0.0), tint: .red)
             }
-            .frame(height: 200)  // Defines the height for the map
+            .frame(height: 200)
 
-            Spacer()  // Pushes the button to the bottom
+            Spacer()
 
             // Button to view the event on its official website
             Button(action: {
-                if let url = URL(string: event.url) {  // Safely unwrap the event URL
-                    UIApplication.shared.open(url)  // Open the event's URL in a browser
+                if let url = URL(string: event.url) {
+                    UIApplication.shared.open(url)
                 }
             }) {
-                // Button label
                 Text("View on Website")
             }
-            .buttonStyle(GradientButtonStyle()) // Apply GradientButtonStyle for the button
-            .padding(.top, 20)  // Adds top padding to space the button from other content
+            .buttonStyle(GradientButtonStyle())
+            .padding(.top, 20)
         }
-        .padding()  // Adds padding around the entire VStack
-        .navigationTitle("Event Details")  // Sets the title for the navigation bar
-        .navigationBarTitleDisplayMode(.inline)  // Displays the title inline, without large font
+        .padding()
+        .navigationTitle("Event Details")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

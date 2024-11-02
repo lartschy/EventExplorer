@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 import FirebaseAuth
+import Network
 
 // ViewModel responsible for authentication logic
 class AuthViewModel: ObservableObject {
@@ -28,6 +29,7 @@ class AuthViewModel: ObservableObject {
 
     // Indicates if registration was successful
      @Published var registrationSuccess: Bool = false
+
 
 
     func register() {
@@ -78,20 +80,41 @@ class AuthViewModel: ObservableObject {
         return password.count >= 6 // Return true if the password is at least 6 characters long
     }
     
-    // Function to sign in an existing user
-    func signIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
-        // Use Firebase Auth to sign in the user
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if let error = error {
-                // Print error message for debugging
-                print("Sign in error: \(error.localizedDescription)")
-                completion(false) // Notify that sign-in failed
-                return
+    // Function to check network connectivity once and stop monitoring
+        func isConnectedToNetwork(completion: @escaping (Bool) -> Void) {
+            let monitor = NWPathMonitor()
+            let queue = DispatchQueue(label: "NetworkMonitor")
+            
+            monitor.pathUpdateHandler = { path in
+                completion(path.status == .satisfied)
+                monitor.cancel() // Stop monitoring after status check
             }
-            completion(true) // Sign-in successful
+            monitor.start(queue: queue)
         }
-    }
 
+        // Sign-in function with network check
+        func signIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
+            isConnectedToNetwork { isConnected in
+                guard isConnected else {
+                    // No internet connection
+                    self.authError = IdentifiableError(message: "No internet connection. Please check your network and try again.")
+                    completion(false)
+                    return
+                }
+
+                // Firebase Auth sign-in
+                Auth.auth().signIn(withEmail: email, password: password) { result, error in
+                    if let error = error {
+                        print("Sign in error: \(error.localizedDescription)")
+                        self.authError = IdentifiableError(message: "Incorrect email or password.")
+                        completion(false)
+                        return
+                    }
+                    completion(true) // Sign-in successful
+                }
+            }
+        }
+    
     // Function to sign out a user
     func logout() {
         // Call the AuthenticationManager to sign out the user
