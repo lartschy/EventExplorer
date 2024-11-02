@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftData
 
-// Nearby events view for listing the event in the selected country of the user
+// Nearby events view for listing events in the user's selected country
 struct NearbyEventsView: View {
     // Environment property to access shared data context (if needed for persistence or Core Data)
     @Environment(\.modelContext) private var modelContext
@@ -30,22 +30,28 @@ struct NearbyEventsView: View {
         // Wraps the content in a NavigationView for navigation and title management
         NavigationView {
             VStack {
+                // Show loading indicator if data is still loading
+                if viewModel.isLoading {
+                    ProgressView("Loading Events...")
+                        .padding()
+                }
+                
                 // Search bar and country picker in a horizontal row
                 HStack {
                     // Search bar component, bound to the ViewModel's searchText
                     SearchBar(searchText: $viewModel.searchText)
                     
                     Picker("Select Country", selection: $profileViewModel.selectedCountry) {
-                                            ForEach(profileViewModel.countries, id: \.self) { country in
-                                                Text(country).tag(country)
-                                            }
-                                        }
+                        ForEach(profileViewModel.countries, id: \.self) { country in
+                            Text(country).tag(country)
+                        }
+                    }
                     .pickerStyle(MenuPickerStyle())  // Dropdown style for the picker
                     .padding(.leading, 10)
                 }
                 .padding(.horizontal)
 
-                // Scrollable list of events
+                // Scrollable list of events with pull-to-refresh
                 ScrollView {
                     VStack(alignment: .center, spacing: 25) {
                         // Loops through filtered events from the ViewModel and displays each event row
@@ -54,6 +60,9 @@ struct NearbyEventsView: View {
                         }
                     }
                     .padding()
+                }
+                .refreshable {
+                    viewModel.fetchData(for: profileViewModel.selectedCountry)
                 }
                 .navigationTitle("Events")  // Title for the navigation bar
                 .onAppear {
@@ -66,8 +75,3 @@ struct NearbyEventsView: View {
         }
     }
 }
-
-
-
-
-

@@ -13,10 +13,10 @@ import FirebaseAuth
 
 // ViewModel responsible for managing and fetching event data
 class NearbyEventsViewModel: ObservableObject {
-    
     // Published properties to update the SwiftUI views
-    @Published var events: [EventModel] = []  // Stores the list of events
-    @Published var searchText: String = ""     // Holds the search query text
+    @Published var events: [EventModel] = []
+    @Published var searchText: String = ""
+    @Published var isLoading: Bool = false
     
     // Store JSON string
     @AppStorage("favourites") private var favouritesData: String = ""
@@ -86,11 +86,15 @@ class NearbyEventsViewModel: ObservableObject {
 
     // Fetch event data for a specific country
     func fetchData(for country: String) {
-        print("fetchData() called for country: \(country)")
+        // Start loading indicator
+        self.isLoading = true
+        
         APIService.shared.fetchData(country: country) { [weak self] fetchedEvents in
-            print("fetchData() completion block reached")
             DispatchQueue.main.async {
-                self?.events = fetchedEvents // Update events with fetched data
+                // Update events with fetched data
+                self?.events = fetchedEvents
+                // Stop loading indicator
+                self?.isLoading = false
             }
         }
     }
@@ -103,7 +107,6 @@ class NearbyEventsViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self?.events = filteredEvents // Update events with filtered data
             }
-            print("Fetched data block for category:", category)
         }
     }
     
@@ -122,8 +125,6 @@ class NearbyEventsViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self?.events = filteredEvents // Update events with filtered data
             }
-            
-            print("Fetched events for category:", category, "and types:", types ?? ["All Types"])
         }
     }
     
