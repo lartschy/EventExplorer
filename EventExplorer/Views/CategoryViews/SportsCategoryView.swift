@@ -5,13 +5,10 @@
 //  Created by L S on 19/05/2024.
 //
 
-import Foundation
 import SwiftUI
 
 // View for displaying sports events by category in the selected country
 struct SportsCategoryView: View {
-    // Environment property to access shared data context if needed (e.g., for persistence or Core Data)
-    @Environment(\.modelContext) private var modelContext
     
     // StateObject to observe and manage the NearbyEventsViewModel, which handles event data fetching
     @StateObject private var viewModel: NearbyEventsViewModel
@@ -63,8 +60,10 @@ struct SportsCategoryView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Sport Events") // Title in the navigation bar
-            
+            .refreshable {
+                viewModel.fetchDataCategoryAndTypes(category: "sports", types: types, for: profileViewModel.selectedCountry)
+            }
+            .navigationTitle("Sport Events")
             .onAppear {
                 // Fetch sports events when the view appears, based on selected country and types
                 viewModel.fetchDataCategoryAndTypes(category: "sports", types: types, for: profileViewModel.selectedCountry)

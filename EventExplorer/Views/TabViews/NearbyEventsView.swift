@@ -11,9 +11,7 @@ import SwiftData
 
 // Nearby events view for listing events in the user's selected country
 struct NearbyEventsView: View {
-    // Environment property to access shared data context (if needed for persistence or Core Data)
-    @Environment(\.modelContext) private var modelContext
-    
+ 
     // StateObject to observe the ViewModel for this view
     @StateObject private var viewModel: NearbyEventsViewModel
     
@@ -54,9 +52,21 @@ struct NearbyEventsView: View {
                 // Scrollable list of events with pull-to-refresh
                 ScrollView {
                     VStack(alignment: .center, spacing: 25) {
-                        // Loops through filtered events from the ViewModel and displays each event row
-                        ForEach(viewModel.filteredEvents, id: \.id) { event in
-                            EventRowView(event: event, viewModel: viewModel)  // Event row view for each event
+                        if let message = viewModel.emptyStateMessage {
+                            // Display the title and subtitle for the empty state
+                            Text(message.title)
+                                .font(.headline)
+                                .foregroundColor(.gray)
+                                .padding()
+                            Text(message.subtitle)
+                                .font(.subheadline)
+                                .foregroundColor(.accentColor)
+                                .padding()
+                        } else {
+                            // Display events if available
+                            ForEach(viewModel.filteredEvents, id: \.id) { event in
+                                EventRowView(event: event, viewModel: viewModel)
+                            }
                         }
                     }
                     .padding()

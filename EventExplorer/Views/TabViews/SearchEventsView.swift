@@ -11,7 +11,8 @@ import SwiftUI
 // Search view to display event categories
 struct SearchEventsView: View {
     @ObservedObject var profileViewModel: ProfileViewModel
-    
+    @ObservedObject var viewModel: NearbyEventsViewModel
+
     var body: some View {
         NavigationView {
             VStack {
@@ -23,7 +24,7 @@ struct SearchEventsView: View {
                             title: "Sports",
                             imageName: "sports_category",
                             destination: SportsTypeView(
-                                viewModel: NearbyEventsViewModel(),
+                                viewModel: viewModel,
                                 profileViewModel: profileViewModel
                             )
                         )
@@ -33,7 +34,7 @@ struct SearchEventsView: View {
                             title: "Concerts",
                             imageName: "music_category",
                             destination: ConcertsTypeView(
-                                viewModel: NearbyEventsViewModel(),
+                                viewModel: viewModel,
                                 profileViewModel: profileViewModel
                             )
                         )
@@ -45,7 +46,7 @@ struct SearchEventsView: View {
                             title: "Theatre",
                             imageName: "theatre_category",
                             destination: TheaterTypeView(
-                                viewModel: NearbyEventsViewModel(),
+                                viewModel: viewModel,
                                 profileViewModel: profileViewModel
                             )
                         )

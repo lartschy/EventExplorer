@@ -9,8 +9,6 @@ import SwiftUI
 
 // View for displaying theatre events by category in the selected country
 struct TheatreCategoryView: View {
-    // Environment property for shared data context if needed
-    @Environment(\.modelContext) private var modelContext
     
     // StateObject to observe and manage the NearbyEventsViewModel, which handles event data fetching
     @StateObject private var viewModel: NearbyEventsViewModel
@@ -60,8 +58,10 @@ struct TheatreCategoryView: View {
                 }
                 .padding()
             }
+            .refreshable {
+                viewModel.fetchDataCategoryAndTypes(category: "theater", types: types, for: profileViewModel.selectedCountry)
+            }
             .navigationTitle("Theatre Events")
-            
             .onAppear {
                 // Fetch theatre events based on selected country and types
                 viewModel.fetchDataCategoryAndTypes(category: "theater", types: types, for: profileViewModel.selectedCountry)

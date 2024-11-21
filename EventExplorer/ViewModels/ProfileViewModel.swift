@@ -9,7 +9,7 @@ import Foundation
 
 // ViewModel responsible for managing user profile-related data
 class ProfileViewModel: ObservableObject {
-    @Published var selectedCountry: String = "Germany" // Default country
+    @Published var selectedCountry: String = "US" // Default country
     let countries = [
         // List of countries
         "US", "Canada", "Mexico", "Brazil", "Argentina", "Colombia", "Peru", "Chile",

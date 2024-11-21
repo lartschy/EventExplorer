@@ -9,8 +9,6 @@ import SwiftUI
 
 // View for displaying concert events by category in the selected country
 struct ConcertsCategoryView: View {
-    // Environment property for shared data context if needed
-    @Environment(\.modelContext) private var modelContext
     
     // StateObject to observe and manage the NearbyEventsViewModel, which handles event data fetching
     @StateObject private var viewModel: NearbyEventsViewModel
@@ -29,7 +27,7 @@ struct ConcertsCategoryView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack {
             // Top section with search bar and country picker
             HStack {
                 SearchBar(searchText: $viewModel.searchText)
@@ -60,15 +58,17 @@ struct ConcertsCategoryView: View {
                 }
                 .padding()
             }
+            .refreshable {
+                viewModel.fetchDataCategoryAndTypes(category: "concert", types: types, for: profileViewModel.selectedCountry)
+            }
             .navigationTitle("Concert Events")
-            
             .onAppear {
                 // Fetch concert events based on selected country and types
-                viewModel.fetchDataCategoryAndTypes(category: "concerts", types: types, for: profileViewModel.selectedCountry)
+                viewModel.fetchDataCategoryAndTypes(category: "concert", types: types, for: profileViewModel.selectedCountry)
             }
             .onChange(of: profileViewModel.selectedCountry) { newCountry in
                 // Re-fetch events if the selected country changes
-                viewModel.fetchDataCategoryAndTypes(category: "concerts", types: types, for: newCountry)
+                viewModel.fetchDataCategoryAndTypes(category: "concert", types: types, for: newCountry)
             }
         }
     }

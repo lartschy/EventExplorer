@@ -60,9 +60,12 @@ struct FavouriteEventsView: View {
                         .padding()
                     }
                 }
+                .refreshable {
+                    viewModel.fetchData(for: profileViewModel.selectedCountry)
+                }
                 .navigationTitle("Favourite Events")  // Title for the navigation bar
                 .onAppear {
-                    // Any additional logic when the view appears, if needed
+                    viewModel.fetchData(for: profileViewModel.selectedCountry) 
                 }
                 .onChange(of: profileViewModel.selectedCountry) { newCountry in
                     viewModel.fetchData(for: newCountry) // Fetch data based on the selected country

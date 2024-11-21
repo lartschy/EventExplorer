@@ -9,6 +9,8 @@ import FirebaseAuth
 import Foundation
 
 class AuthenticationManager {
+    
+    // Singleton instance of AuthenticationManager
     static let shared = AuthenticationManager()
 
     private init() {} // Private initializer to enforce singleton
@@ -37,11 +39,17 @@ class AuthenticationManager {
 
     // Method to handle user sign-out
     func signOutUser(completion: @escaping (Result<Void, Error>) -> Void) {
-        do {
-            try Auth.auth().signOut()
-            completion(.success(()))
-        } catch let signOutError as NSError {
-            completion(.failure(signOutError))
-        }
+        Auth.auth().currentUser?.getIDTokenForcingRefresh(true, completion: { _, error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    do {
+                        try Auth.auth().signOut()
+                        completion(.success(()))
+                    } catch let signOutError as NSError {
+                        completion(.failure(signOutError))
+                    }
+                }
+            })
     }
 }

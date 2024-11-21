@@ -98,17 +98,18 @@ class AuthViewModel: ObservableObject {
                 return
             }
 
-            // Firebase Auth sign-in
-            Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            // Call AuthenticationManager's signInUser function
+            AuthenticationManager.shared.signInUser(email: email, password: password) { result in
                 DispatchQueue.main.async {
-                    if let error = error {
+                    switch result {
+                    case .success:
+                        completion(true) // Sign-in successful
+                    case .failure(let error):
                         print("Sign in error: \(error.localizedDescription)")
                         // Set error message for incorrect email or password
                         self.authError = IdentifiableError(message: "Incorrect email or password.")
                         completion(false)
-                        return
                     }
-                    completion(true) // Sign-in successful
                 }
             }
         }

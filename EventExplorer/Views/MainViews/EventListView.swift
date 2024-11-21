@@ -16,7 +16,6 @@ struct EventListView: View {
     @StateObject private var profileViewModel = ProfileViewModel()
     @StateObject private var authViewModel = AuthViewModel()
 
-
     var body: some View {
         // Navigation view with tabs for different sections
         NavigationView {
@@ -29,7 +28,7 @@ struct EventListView: View {
                     }
 
                 // Search events tab
-                SearchEventsView(profileViewModel: profileViewModel)
+                SearchEventsView(profileViewModel: profileViewModel, viewModel: nearbyEventsViewModel)
                     .tabItem {
                         Image(systemName: "magnifyingglass")
                         Text("Browse")
@@ -53,11 +52,5 @@ struct EventListView: View {
             .navigationBarHidden(true) // Hide the navigation bar for a cleaner look
         }
     }
-}
-
-
-#Preview {
-    EventListView()
-        .modelContainer(for: EventModel.self, inMemory: true)
 }
 

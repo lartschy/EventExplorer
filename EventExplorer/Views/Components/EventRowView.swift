@@ -90,7 +90,7 @@ struct EventRowView: View {
             .shadow(radius: 10)
         }
         .onAppear {
-            // Check if the event is a favorite when the view appears
+            // Check if the event is a favorite when the view asaveFavouritesppears
             isFavorite = viewModel.isFavourite(eventId: event.id)
         }
     }

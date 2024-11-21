@@ -72,7 +72,7 @@ struct RegistrationView: View {
                             dismissButton: .default(Text("OK"), action: {
                                 if authViewModel.registrationSuccess {
                                     navigateToMainMenu = true
-                                }
+                                }   
                             })
                         )
                     }
