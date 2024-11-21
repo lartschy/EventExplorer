@@ -38,7 +38,7 @@ struct CategoryTypeView<Destination: View>: View {
             .padding(.top, 20) // Top padding for the VStack
             .padding(.bottom, 20) // Bottom padding for the VStack
         }
-        .navigationTitle("\(title) Events") // Title of the navigation bar
-        .navigationBarBackButtonHidden(false) // Ensure the back button is visible
+        .navigationBarBackButtonHidden(true)
     }
+    
 }

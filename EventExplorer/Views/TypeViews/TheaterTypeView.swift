@@ -9,17 +9,9 @@ import SwiftUI
 
 // View for displaying theater events by type in the selected country
 struct TheaterTypeView: View {
-    // ViewModel responsible for fetching and managing nearby events
-    @StateObject private var viewModel: NearbyEventsViewModel
     
-    // ViewModel for managing user profile data
+    @ObservedObject var viewModel: NearbyEventsViewModel
     @ObservedObject var profileViewModel: ProfileViewModel
-
-    // Initializer to set up the view models
-    init(viewModel: NearbyEventsViewModel, profileViewModel: ProfileViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel) // Initializes the view model as a state object
-        self.profileViewModel = profileViewModel // Sets the profile view model as observed
-    }
 
     // Array of theater categories to be displayed in the view
     private let theaterCategories = [
@@ -30,14 +22,20 @@ struct TheaterTypeView: View {
     ]
 
     var body: some View {
-        // CategoryTypeView that displays the theater categories and navigates to the respective views
-        CategoryTypeView(
-            title: "Theater", // Title for the CategoryTypeView
-            categories: theaterCategories, // Passing the theater categories to the view
-            destinationView: { category in
-                // Closure to define the destination view for each category
-                TheatreCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: category.types)
-            }
-        )
+        NavigationView {
+            // CategoryTypeView that displays the theater categories and navigates to the respective views
+            CategoryTypeView(
+                title: "Theater", // Title for the CategoryTypeView
+                categories: theaterCategories, // Passing the theater categories to the view
+                destinationView: { category in
+                    // Closure to define the destination view for each category
+                    TheatreCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: category.types)
+                }
+            )
+        }
+        .navigationTitle("Theater Events")
+        .navigationBarBackButtonHidden(false)
+        .environmentObject(profileViewModel)
+        .environmentObject(viewModel)
     }
 }

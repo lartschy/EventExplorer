@@ -10,8 +10,8 @@ import SwiftUI
 
 // Search view to display event categories
 struct SearchEventsView: View {
-    @ObservedObject var profileViewModel: ProfileViewModel
-    @ObservedObject var viewModel: NearbyEventsViewModel
+    @StateObject var profileViewModel: ProfileViewModel
+    @StateObject var viewModel: NearbyEventsViewModel
 
     var body: some View {
         NavigationView {
@@ -56,8 +56,12 @@ struct SearchEventsView: View {
                 .padding(.bottom, 30)
             }
             .navigationTitle("Browse Events")
-            .navigationBarBackButtonHidden(true)
+            //.navigationBarBackButtonHidden(true)
+           
         }
+        
+        .environmentObject(profileViewModel)
+        .environmentObject(viewModel)
     }
 }
 

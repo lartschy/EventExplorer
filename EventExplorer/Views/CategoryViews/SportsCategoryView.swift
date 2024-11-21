@@ -10,22 +10,18 @@ import SwiftUI
 // View for displaying sports events by category in the selected country
 struct SportsCategoryView: View {
     
-    // StateObject to observe and manage the NearbyEventsViewModel, which handles event data fetching
-    @StateObject private var viewModel: NearbyEventsViewModel
-    
-    // ObservedObject for the ProfileViewModel to track the selected country and related data
+    @ObservedObject var viewModel: NearbyEventsViewModel
     @ObservedObject var profileViewModel: ProfileViewModel
     
-    // Optional array of event types to further filter sports events (e.g., basketball, soccer, etc.)
+    // Optional array of event types to further filter sports events
     let types: [String]?
 
-    // Custom initializer to inject the ViewModels and event types
     init(viewModel: NearbyEventsViewModel, profileViewModel: ProfileViewModel, types: [String]?) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
         self.profileViewModel = profileViewModel
         self.types = types
     }
-
+    
     var body: some View {
         VStack(spacing: 0) {
             // Top section with search bar and country picker
@@ -63,7 +59,7 @@ struct SportsCategoryView: View {
             .refreshable {
                 viewModel.fetchDataCategoryAndTypes(category: "sports", types: types, for: profileViewModel.selectedCountry)
             }
-            .navigationTitle("Sport Events")
+            .navigationBarBackButtonHidden(true)
             .onAppear {
                 // Fetch sports events when the view appears, based on selected country and types
                 viewModel.fetchDataCategoryAndTypes(category: "sports", types: types, for: profileViewModel.selectedCountry)

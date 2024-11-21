@@ -10,18 +10,14 @@ import SwiftUI
 // View for displaying concert events by category in the selected country
 struct ConcertsCategoryView: View {
     
-    // StateObject to observe and manage the NearbyEventsViewModel, which handles event data fetching
-    @StateObject private var viewModel: NearbyEventsViewModel
-    
-    // ObservedObject for the ProfileViewModel to track the selected country and related data
+    @ObservedObject var viewModel: NearbyEventsViewModel
     @ObservedObject var profileViewModel: ProfileViewModel
     
-    // Optional array of event types to further filter concerts (e.g., rock, pop, jazz, etc.)
+    // Optional array of event types to further filter concerts
     let types: [String]?
 
-    // Custom initializer to inject the ViewModels and event types
     init(viewModel: NearbyEventsViewModel, profileViewModel: ProfileViewModel, types: [String]?) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
         self.profileViewModel = profileViewModel
         self.types = types
     }
@@ -58,10 +54,10 @@ struct ConcertsCategoryView: View {
                 }
                 .padding()
             }
+            .navigationBarBackButtonHidden(true)
             .refreshable {
                 viewModel.fetchDataCategoryAndTypes(category: "concert", types: types, for: profileViewModel.selectedCountry)
             }
-            .navigationTitle("Concert Events")
             .onAppear {
                 // Fetch concert events based on selected country and types
                 viewModel.fetchDataCategoryAndTypes(category: "concert", types: types, for: profileViewModel.selectedCountry)
