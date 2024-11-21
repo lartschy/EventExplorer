@@ -32,6 +32,7 @@
 		497788862BF0168D0050D339 /* NearbyEventsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497788852BF0168D0050D339 /* NearbyEventsViewModel.swift */; };
 		497788882BF01E510050D339 /* EventRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497788872BF01E510050D339 /* EventRowView.swift */; };
 		4977888A2BF0B3360050D339 /* Text+CategoryText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497788892BF0B3360050D339 /* Text+CategoryText.swift */; };
+		497CAA0D2CEFC1C4008057C5 /* EventCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497CAA0C2CEFC1C2008057C5 /* EventCategoryView.swift */; };
 		499166512BA3318300D2CE1B /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499166502BA3318300D2CE1B /* APIService.swift */; };
 		49A3A4382CA1710D009CA91B /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3A4372CA1710D009CA91B /* Date.swift */; };
 		49A3A43B2CA17DB1009CA91B /* CountryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A3A43A2CA17DB1009CA91B /* CountryModel.swift */; };
@@ -91,6 +92,7 @@
 		497788852BF0168D0050D339 /* NearbyEventsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyEventsViewModel.swift; sourceTree = "<group>"; };
 		497788872BF01E510050D339 /* EventRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventRowView.swift; sourceTree = "<group>"; };
 		497788892BF0B3360050D339 /* Text+CategoryText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Text+CategoryText.swift"; sourceTree = "<group>"; };
+		497CAA0C2CEFC1C2008057C5 /* EventCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCategoryView.swift; sourceTree = "<group>"; };
 		499166502BA3318300D2CE1B /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		49A3A4372CA1710D009CA91B /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		49A3A43A2CA17DB1009CA91B /* CountryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryModel.swift; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 		49A3A4392CA17CB5009CA91B /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				497CAA0C2CEFC1C2008057C5 /* EventCategoryView.swift */,
 				49375BBA2CD0FDB200CF45D4 /* CategoryItemView.swift */,
 				49375BB42CD0FB5100CF45D4 /* CategoryTypeView.swift */,
 				497788832BF0160B0050D339 /* SearchBar.swift */,
@@ -437,6 +440,7 @@
 				49C5305E2B87852E009E6877 /* RegistrationView.swift in Sources */,
 				496C42902B923D4E003DB970 /* SearchEventsView.swift in Sources */,
 				497788842BF0160B0050D339 /* SearchBar.swift in Sources */,
+				497CAA0D2CEFC1C4008057C5 /* EventCategoryView.swift in Sources */,
 				496C428E2B923CEC003DB970 /* NearbyEventsView.swift in Sources */,
 				49D566C12BF9FFC5004560F7 /* Taxonomy.swift in Sources */,
 				49A3A4382CA1710D009CA91B /* Date.swift in Sources */,

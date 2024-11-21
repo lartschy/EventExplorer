@@ -9,63 +9,18 @@ import SwiftUI
 
 // View for displaying theatre events by category in the selected country
 struct TheatreCategoryView: View {
-    
     @ObservedObject var viewModel: NearbyEventsViewModel
     @ObservedObject var profileViewModel: ProfileViewModel
     
-    // Optional array of event types to further filter theatre events
     let types: [String]?
-
-    init(viewModel: NearbyEventsViewModel, profileViewModel: ProfileViewModel, types: [String]?) {
-        self.viewModel = viewModel
-        self.profileViewModel = profileViewModel
-        self.types = types
-    }
-
+    
     var body: some View {
-        VStack(spacing: 0) {
-            // Top section with search bar and country picker
-            HStack {
-                SearchBar(searchText: $viewModel.searchText)
-                
-                // Country selection picker, bound to the ProfileViewModel's selected country
-                Picker("Select Country", selection: $profileViewModel.selectedCountry) {
-                    ForEach(profileViewModel.countries, id: \.self) { country in
-                        Text(country).tag(country)
-                    }
-                }
-            }
-            .padding(.horizontal)
-            
-            // Scrollable list of theatre events
-            ScrollView {
-                VStack(alignment: .center, spacing: 25) {
-                    if viewModel.filteredEvents.isEmpty {
-                        Text("No Theatre Events Available")
-                            .font(.headline)
-                            .foregroundColor(.gray)
-                            .padding()
-                    } else {
-                        // Display each event in an EventRowView
-                        ForEach(viewModel.filteredEvents, id: \.id) { event in
-                            EventRowView(event: event, viewModel: viewModel)
-                        }
-                    }
-                }
-                .padding()
-            }
-            .navigationBarBackButtonHidden(true)
-            .refreshable {
-                viewModel.fetchDataCategoryAndTypes(category: "theater", types: types, for: profileViewModel.selectedCountry)
-            }
-            .onAppear {
-                // Fetch theatre events based on selected country and types
-                viewModel.fetchDataCategoryAndTypes(category: "theater", types: types, for: profileViewModel.selectedCountry)
-            }
-            .onChange(of: profileViewModel.selectedCountry) { newCountry in
-                // Re-fetch events if the selected country changes
-                viewModel.fetchDataCategoryAndTypes(category: "theater", types: types, for: newCountry)
-            }
-        }
+        EventCategoryView(
+            viewModel: viewModel,
+            profileViewModel: profileViewModel,
+            category: "theater",
+            types: types,
+            emptyMessage: "No Theatre Events Available"
+        )
     }
 }
