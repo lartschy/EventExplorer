@@ -31,11 +31,11 @@ class APIService {
     
     // Fetches event data from the SeatGeek API
     // - Parameters:
-    //   - page: The page number for pagination (default: 1)
-    //   - perPage: The number of results per page (default: 100)
+    //   - page: The page number for pagination
+    //   - perPage: The number of results per page
     //   - country: The country filter for events
     //   - returned: Closure that returns an array of EventModel objects
-    func fetchData(page: Int = 1, perPage: Int = 100, country: String, returned: @escaping ([EventModel]) -> Void) {
+    func fetchData(page: Int = 1, perPage: Int = 200, country: String, returned: @escaping ([EventModel]) -> Void) {
         
         // Build the URL components
         guard var urlComponents = URLComponents(string: baseURL) else {

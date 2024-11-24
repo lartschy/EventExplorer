@@ -55,9 +55,7 @@ struct SearchEventsView: View {
                 .padding([.leading, .trailing], 20)
                 .padding(.bottom, 30)
             }
-            .navigationTitle("Browse Events")
-            //.navigationBarBackButtonHidden(true)
-           
+            .navigationTitle("Browse Events")           
         }
         
         .environmentObject(profileViewModel)

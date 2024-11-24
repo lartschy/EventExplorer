@@ -22,10 +22,12 @@ struct SportsTypeView: View {
     
     var body: some View {
         NavigationView {
+            // CategoryTypeView that displays the sport categories and navigates to the respective views
             CategoryTypeView(
-                title: "Sport",
-                categories: sportsCategories,
+                title: "Sport",  // Title for the CategoryTypeView
+                categories: sportsCategories, // Passing the sport categories to the view
                 destinationView: { category in
+                    // Closure to define the destination view for each category
                     SportsCategoryView(viewModel: viewModel, profileViewModel: profileViewModel, types: category.types)
                 }
             )

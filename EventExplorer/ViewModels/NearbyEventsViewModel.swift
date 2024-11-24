@@ -58,30 +58,12 @@ class NearbyEventsViewModel: ObservableObject {
         return nil
     }
     
-    // Toggle favorite status for an event
-    func toggleFavourite(for eventId: String) {
-        guard let uid = self.uid else { return }  // Make sure uid is available
-        var favourites = loadFavourites()
-        var userFavourites = favourites[uid] ?? [:]  // Get favorites for the current user
-            
-        // Toggle the favorite status
-        userFavourites[eventId] = !(userFavourites[eventId] ?? false)
-                    
-        favourites[uid] = userFavourites // Update favorites for the user
-        saveFavourites(favourites) // Save updated favorites
-    }
-
-    // Function to encode dictionary to JSON string
-    private func saveFavourites(_ favourites: [String: [String: Bool]]) {
-        if let data = try? JSONEncoder().encode(favourites),
-            let json = String(data: data, encoding: .utf8) {
-            favouritesData = json // Save the JSON string to AppStorage
-        }
-    }
-    
     // Function to decode JSON string to a dictionary of dictionaries keyed by uid
     private func loadFavourites() -> [String: [String: Bool]] {
+        // Convert AppStorage data to Data object
         guard let data = favouritesData.data(using: .utf8) else { return [:] }
+        
+        // Decode the data
         let favourites = (try? JSONDecoder().decode([String: [String: Bool]].self, from: data)) ?? [:]
         return favourites
     }
@@ -89,15 +71,50 @@ class NearbyEventsViewModel: ObservableObject {
     // Check if an event is a favorite for the current user
     func isFavourite(eventId: String) -> Bool {
         guard let uid = self.uid else { return false }
-        let userFavourites = loadFavourites()[uid] ?? [:] // Get user's favorites
-        return userFavourites[eventId] ?? false // Return true if event is a favorite
+        
+        // Get user's favorites
+        let userFavourites = loadFavourites()[uid] ?? [:]
+        
+        // Return true if event is a favorite
+        return userFavourites[eventId] ?? false
     }
 
     // Fetch favorite events for the current user
     func getFavouriteEvents(from events: [EventModel]) -> [EventModel] {
-        return events.filter { isFavourite(eventId: $0.id) } // Filter events that are marked as favorites
+        // Filter events that are marked as favorites
+        return events.filter { isFavourite(eventId: $0.id) }
+    }
+    
+    // Toggle favorite status for an event
+    func toggleFavourite(for eventId: String) {
+        // Make sure uid is available
+        guard let uid = self.uid else { return }
+        
+        // Leading favourite events
+        var favourites = loadFavourites()
+        
+        // Get favorites for the current user
+        var userFavourites = favourites[uid] ?? [:]
+            
+        // Toggle the favorite status
+        userFavourites[eventId] = !(userFavourites[eventId] ?? false)
+                    
+        // Update favorites for the user, save updated favorites
+        favourites[uid] = userFavourites
+        saveFavourites(favourites)
     }
 
+    // Function to encode dictionary to JSON string
+    private func saveFavourites(_ favourites: [String: [String: Bool]]) {
+        // Convert to JSON text
+        if let data = try? JSONEncoder().encode(favourites),
+           // Convert to string for AppStorage
+           let json = String(data: data, encoding: .utf8) {
+                // Save the string to AppStorage
+                favouritesData = json
+        }
+    }
+    
     // Fetch event data for a specific country
     func fetchData(for country: String) {
         // Start loading indicator
@@ -189,10 +206,15 @@ class NearbyEventsViewModel: ObservableObject {
 
     // Opens the address in the selected map app
     func openAddressInMap(for event: EventModel, app: String) {
+        // Convert address to fit the URL
         let address = event.address.replacingOccurrences(of: " ", with: "+")
+        
+        // Make the search query
         let query = "\(event.venue), \(event.city), \(event.country)"
         
         let urlString: String
+        
+        // Make the final URL
         switch app {
         case "Apple Maps":
             urlString = "http://maps.apple.com/?q=\(query)"
@@ -202,6 +224,7 @@ class NearbyEventsViewModel: ObservableObject {
             return
         }
 
+        // Open the application
         if let url = URL(string: urlString), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url)
         } else if app == "Google Maps" {
@@ -209,5 +232,24 @@ class NearbyEventsViewModel: ObservableObject {
             if let webURL = URL(string: "https://www.google.com/maps/search/?api=1&query=\(address)") {                   UIApplication.shared.open(webURL)
             }
         }
+    }
+}
+
+
+// Extension for Date to provide reusable formatting methods
+extension Date {
+    
+    // Static method to convert a string to a Date object
+    static func from(_ dateString: String, format: String = "yyyy-MM-dd'T'HH:mm:ss") -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: dateString)
+    }
+
+    // Method to convert a Date object to a formatted string
+    func toString(format: String = "MMM d, yyyy HH:mm") -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: self)
     }
 }

@@ -12,6 +12,7 @@ import Network
 
 // ViewModel responsible for authentication logic
 class AuthViewModel: ObservableObject {
+    
     // The user's email address and password
     @Published var email: String = ""
     @Published var password: String = ""
@@ -26,6 +27,7 @@ class AuthViewModel: ObservableObject {
     // Indicates if registration was successful
     @Published var registrationSuccess: Bool = false
 
+    // Registration function with checks
     func register() {
         // Check if the email format is valid
         if !isValidEmail(email) {
@@ -115,7 +117,6 @@ class AuthViewModel: ObservableObject {
         }
     }
 
-    
     // Function to sign out a user
     func logout() {
         // Call the AuthenticationManager to sign out the user

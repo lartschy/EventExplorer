@@ -8,12 +8,11 @@
 import FirebaseAuth
 import Foundation
 
+// Firebase authentication class
 class AuthenticationManager {
     
     // Singleton instance of AuthenticationManager
     static let shared = AuthenticationManager()
-
-    private init() {} // Private initializer to enforce singleton
 
     // Method to handle user registration
     func registerUser(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -40,16 +39,16 @@ class AuthenticationManager {
     // Method to handle user sign-out
     func signOutUser(completion: @escaping (Result<Void, Error>) -> Void) {
         Auth.auth().currentUser?.getIDTokenForcingRefresh(true, completion: { _, error in
-                if let error = error {
-                    completion(.failure(error))
-                } else {
-                    do {
-                        try Auth.auth().signOut()
-                        completion(.success(()))
-                    } catch let signOutError as NSError {
-                        completion(.failure(signOutError))
-                    }
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                do {
+                    try Auth.auth().signOut()
+                    completion(.success(()))
+                } catch let signOutError as NSError {
+                    completion(.failure(signOutError))
                 }
-            })
+            }
+        })
     }
 }

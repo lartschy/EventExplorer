@@ -56,5 +56,6 @@ class FavouriteEventTests: XCTestCase {
         XCTAssertEqual(favouriteEvents.count, 1, "Only event1 should be in the favorites.")
         XCTAssertEqual(favouriteEvents.first?.id, event1.id, "The favorite event should be event1.")
     }
+    
 }
 

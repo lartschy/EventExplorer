@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-// Custom button style with gradient background, white text, and rounded corners
+// Custom button style 
 struct GradientButtonStyle: ButtonStyle {
+    // Gradient background, white text, and rounded corners
     var colors: [Color] = [
         Color(red: 1.0, green: 0.6, blue: 0.8),
         Color(red: 1.0, green: 0.8, blue: 0.6)
